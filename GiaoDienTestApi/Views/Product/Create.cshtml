@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Thêm Sản Phẩm Mới";
+}
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<h1 class="text-center">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Thông tin sản phẩm</h4>
+            </div>
+            <div class="card-body">
+                <form id="formThemSanPham">
+                    <div class="mb-3">
+                        <label for="tenSanPham" class="form-label">Tên Sản Phẩm</label>
+                        <input type="text" class="form-control" id="tenSanPham" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="giaSanPham" class="form-label">Giá Sản Phẩm</label>
+                        <input type="number" class="form-control" id="giaSanPham" required min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="moTaSanPham" class="form-label">Mô Tả</label>
+                        <textarea class="form-control" id="moTaSanPham" rows="3"></textarea>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Lưu Sản Phẩm</button>
+                        <a href="/Product/Index" class="btn btn-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $("#formThemSanPham").submit(function(e) {
+            e.preventDefault();
+
+            let sanPham = {
+                name: $("#tenSanPham").val(),
+                price: parseFloat($("#giaSanPham").val()),
+                description: $("#moTaSanPham").val()
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "https://localhost:7058/api/product",
+                data: JSON.stringify(sanPham),
+                contentType: "application/json",
+                success: function(response) {
+                    alert("Thêm sản phẩm thành công!");
+                    window.location.href = "/Product/Index";
+                },
+                error: function(err) {
+                    console.log("Lỗi khi thêm sản phẩm:", err);
+                    alert("Không thể thêm sản phẩm. Vui lòng thử lại!");
+                }
+            });
+        });
+    });
+</script>

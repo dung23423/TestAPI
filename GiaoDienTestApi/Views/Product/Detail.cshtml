@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Chi Tiết Sản Phẩm";
+}
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<h1 class="text-center">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Thông tin chi tiết sản phẩm #<span id="idSanPham">@ViewData["ProductId"]</span></h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Mã Sản Phẩm:</div>
+                    <div class="col-md-8" id="id"></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Tên Sản Phẩm:</div>
+                    <div class="col-md-8" id="name"></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Giá Sản Phẩm:</div>
+                    <div class="col-md-8" id="price"></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Mô Tả:</div>
+                    <div class="col-md-8" id="description"></div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="/Product/Edit/@ViewData["ProductId"]" class="btn btn-warning">Sửa</a>
+                    <a href="/Product/Delete/@ViewData["ProductId"]" class="btn btn-danger">Xóa</a>
+                    <a href="/Product/Index" class="btn btn-secondary">Quay Lại</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        const productId = @ViewData["ProductId"];
+
+        $.ajax({
+            type: "GET",
+            url: `https://localhost:7058/api/product/${productId}`,
+            success: function(data) {
+                $("#id").text(data.id);
+                $("#name").text(data.name);
+                $("#price").text(data.price.toLocaleString('vi-VN') + ' VNĐ');
+                $("#description").text(data.description);
+            },
+            error: function(err) {
+                console.log("Lỗi khi lấy thông tin sản phẩm:", err);
+                alert("Không thể tải thông tin sản phẩm. Vui lòng thử lại!");
+                window.location.href = "/Product/Index";
+            }
+        });
+    });
+</script>

@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "Xóa Sản Phẩm";
+}
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<h1 class="text-center">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">Xác nhận xóa sản phẩm #<span id="idSanPham">@ViewData["ProductId"]</span></h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="fa fa-exclamation-triangle"></i> Bạn có chắc chắn muốn xóa sản phẩm này không? Hành động này không thể hoàn tác.
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Mã Sản Phẩm:</div>
+                    <div class="col-md-8" id="id"></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Tên Sản Phẩm:</div>
+                    <div class="col-md-8" id="name"></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Giá Sản Phẩm:</div>
+                    <div class="col-md-8" id="price"></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 fw-bold">Mô Tả:</div>
+                    <div class="col-md-8" id="description"></div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button id="btnXacNhanXoa" class="btn btn-danger">Xác Nhận Xóa</button>
+                    <a href="/Product/Index" class="btn btn-secondary">Hủy</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        const productId = @ViewData["ProductId"];
+
+        $.ajax({
+            type: "GET",
+            url: `https://localhost:7058/api/product/${productId}`,
+            success: function(data) {
+                $("#id").text(data.id);
+                $("#name").text(data.name);
+                $("#price").text(data.price.toLocaleString('vi-VN') + ' VNĐ');
+                $("#description").text(data.description);
+            },
+            error: function(err) {
+                console.log("Lỗi khi lấy thông tin sản phẩm:", err);
+                alert("Không thể tải thông tin sản phẩm. Vui lòng thử lại!");
+                window.location.href = "/Product/Index";
+            }
+        });
+
+        $("#btnXacNhanXoa").click(function() {
+            $.ajax({
+                type: "DELETE",
+                url: `https://localhost:7058/api/product/${productId}`,
+                success: function(response) {
+                    alert("Xóa sản phẩm thành công!");
+                    window.location.href = "/Product/Index";
+                },
+                error: function(err) {
+                    console.log("Lỗi khi xóa sản phẩm:", err);
+                    alert("Không thể xóa sản phẩm. Vui lòng thử lại!");
+                }
+            });
+        });
+    });
+</script>

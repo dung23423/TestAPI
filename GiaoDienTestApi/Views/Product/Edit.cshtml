@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "Sửa Thông Tin Sản Phẩm";
+}
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<h1 class="text-center">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h4 class="mb-0">Cập nhật thông tin sản phẩm #<span id="idSanPham">@ViewData["ProductId"]</span></h4>
+            </div>
+            <div class="card-body">
+                <form id="formSuaSanPham">
+                    <div class="mb-3">
+                        <label for="tenSanPham" class="form-label">Tên Sản Phẩm</label>
+                        <input type="text" class="form-control" id="tenSanPham" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="giaSanPham" class="form-label">Giá Sản Phẩm</label>
+                        <input type="number" class="form-control" id="giaSanPham" required min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="moTaSanPham" class="form-label">Mô Tả</label>
+                        <textarea class="form-control" id="moTaSanPham" rows="3"></textarea>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-warning">Cập Nhật</button>
+                        <a href="/Product/Index" class="btn btn-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        const productId = @ViewData["ProductId"];
+
+        // Lấy thông tin sản phẩm hiện tại
+        $.ajax({
+            type: "GET",
+            url: `https://localhost:7058/api/product/${productId}`,
+            success: function(data) {
+                $("#tenSanPham").val(data.name);
+                $("#giaSanPham").val(data.price);
+                $("#moTaSanPham").val(data.description);
+            },
+            error: function(err) {
+                console.log("Lỗi khi lấy thông tin sản phẩm:", err);
+                alert("Không thể tải thông tin sản phẩm. Vui lòng thử lại!");
+                window.location.href = "/Product/Index";
+            }
+        });
+
+        // Xử lý submit form
+        $("#formSuaSanPham").submit(function(e) {
+            e.preventDefault();
+
+            let sanPham = {
+                id: productId,
+                name: $("#tenSanPham").val(),
+                price: parseFloat($("#giaSanPham").val()),
+                description: $("#moTaSanPham").val()
+            };
+
+            $.ajax({
+                type: "PUT",
+                url: `https://localhost:7058/api/product/${productId}`,
+                data: JSON.stringify(sanPham),
+                contentType: "application/json",
+                success: function(response) {
+                    alert("Cập nhật sản phẩm thành công!");
+                    window.location.href = "/Product/Index";
+                },
+                error: function(err) {
+                    console.log("Lỗi khi cập nhật sản phẩm:", err);
+                    alert("Không thể cập nhật sản phẩm. Vui lòng thử lại!");
+                }
+            });
+        });
+    });
+</script>
